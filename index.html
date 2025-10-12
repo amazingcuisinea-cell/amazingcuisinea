@@ -3876,13 +3876,71 @@ let recipes = [
       document.getElementById('legalOverlay').style.display = 'none';
     }
 
-    // Initialize the application
-    function init() {
-      // Check age verification
-      if (!localStorage.getItem('ageVerified')) {
-        ageGate.style.display = 'flex';
-        return;
-      }
+// Initialize the application when DOM is fully loaded
+function init() {
+  // Check age verification
+  if (!localStorage.getItem('ageVerified')) {
+    document.getElementById('ageGate').style.display = 'flex';
+    return;
+  }
+
+  // Check if compliance banner was previously closed
+  if (localStorage.getItem('complianceBannerClosed') === 'true') {
+    document.getElementById('complianceBanner').style.display = 'none';
+  }
+  
+  // Load recipes immediately
+  displayRecipes();
+  displayAfricanRecipes();
+  displayFavoritesCarousel();
+  setupEventListeners();
+  
+  // Show welcome notification
+  showNotification('Welcome to Cuisinéa! Discover recipes from around the world.', 'success');
+}
+
+// Ensure DOM is fully loaded before running init
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+    // Add this function to handle any loading errors
+function handleRecipeErrors() {
+  const recipesList = document.getElementById('recipes-list');
+  const africanRecipesList = document.getElementById('african-recipes-list');
+  
+  if (!recipesList || !africanRecipesList) {
+    console.error('Recipe containers not found');
+    setTimeout(() => {
+      displayRecipes();
+      displayAfricanRecipes();
+    }, 100);
+    return;
+  }
+}
+
+// Update your displayRecipes function with error handling
+function displayRecipes(filteredRecipes = recipes) {
+  const recipesList = document.getElementById('recipes-list');
+  if (!recipesList) {
+    console.error('Recipes list container not found');
+    return;
+  }
+  
+  recipesList.innerHTML = '';
+  
+  if (filteredRecipes.length === 0) {
+    recipesList.innerHTML = '<div class="empty-state">No recipes found matching your criteria. Try a different filter or search term.</div>';
+    return;
+  }
+  
+  filteredRecipes.forEach(recipe => {
+    const recipeCard = createRecipeCard(recipe);
+    recipesList.appendChild(recipeCard);
+  });
+}
 
       // Check if compliance banner was previously closed
       if (localStorage.getItem('complianceBannerClosed') === 'true') {
