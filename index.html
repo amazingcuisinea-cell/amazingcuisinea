@@ -1695,7 +1695,7 @@
   </style>
 </head>
 <body>
-<!-- Age Verification Gate - FIXED -->
+<!-- Age Verification Gate -->
 <div class="age-gate" id="ageGate">
   <div class="age-content">
     <h2>Age Verification</h2>
@@ -3606,17 +3606,41 @@ let recipes = [
       adminAuth.style.display = 'none';
     }
 
-    // AGE VERIFICATION
-    function confirmAge() {
-      localStorage.setItem('ageVerified', 'true');
-      ageGate.style.display = 'none';
-      // Show cookie consent after age verification
-      setTimeout(showCookieConsent, 1000);
-    }
+   // Age Verification Functions - FIXED
+function confirmAge() {
+  console.log('Age confirmed button clicked');
+  localStorage.setItem('ageVerified', 'true');
+  ageGate.style.display = 'none';
+  showNotification('Welcome to Cuisinéa! Enjoy our recipes.', 'success');
+  
+  // Load the website content
+  loadWebsite();
+}
 
-    function exitSite() {
-      window.location.href = 'https://www.google.com';
-    }
+function exitSite() {
+  console.log('Exit site button clicked');
+  window.location.href = 'https://www.google.com';
+}
+
+function loadWebsite() {
+  console.log('Loading website content...');
+  
+  // Check if compliance banner was previously closed
+  if (localStorage.getItem('complianceBannerClosed') === 'true') {
+    document.getElementById('complianceBanner').style.display = 'none';
+  }
+  
+  // Load all website content
+  displayRecipes();
+  displayAfricanRecipes();
+  displayFavoritesCarousel();
+  setupEventListeners();
+  
+  // Show cookie consent after a delay
+  setTimeout(showCookieConsent, 1000);
+  
+  console.log('Website loaded successfully');
+}
 
     // COOKIE CONSENT
     function showCookieConsent() {
