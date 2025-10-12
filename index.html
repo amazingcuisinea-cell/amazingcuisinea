@@ -3555,7 +3555,106 @@ let recipes = [
 ];
 
 // Additional recipes would continue in the same pork-free pattern...
-
+// Add this missing function - this creates the recipe cards
+function createRecipeCard(recipe) {
+  const card = document.createElement('div');
+  card.className = 'recipe-card';
+  card.dataset.id = recipe.id;
+  
+  const avgRating = calculateAverageRating(recipe.ratings);
+  const starRating = generateStarRating(avgRating);
+  
+  // Sanitize recipe data
+  const safeRecipeName = sanitizeUserInput(recipe.name);
+  const safeRecipeDescription = sanitizeUserInput(recipe.description);
+  
+  card.innerHTML = `
+    <div class="recipe-header">
+      <h3 class="recipe-title">${safeRecipeName}</h3>
+      <div class="recipe-meta">
+        <span class="meta-item"><i class="fas fa-globe"></i> ${recipe.cuisine}</span>
+        <span class="meta-item"><i class="fas fa-clock"></i> ${recipe.cookingTime} mins</span>
+        <span class="meta-item"><i class="fas fa-signal"></i> ${recipe.difficulty}</span>
+      </div>
+      ${avgRating >= 4.5 ? '<div class="top-rated-badge"><i class="fas fa-crown"></i> Top Rated</div>' : ''}
+    </div>
+    
+    <div class="recipe-content-inner">
+      <p>${safeRecipeDescription}</p>
+      
+      <div class="rating-display">
+        <div class="rating-score">
+          <div class="avg-rating">${avgRating.toFixed(1)}</div>
+          <div class="stars-large">${starRating}</div>
+          <div class="rating-count">${recipe.ratings.length} ratings</div>
+        </div>
+      </div>
+      
+      <div class="recipe-section">
+        <h4><i class="fas fa-list"></i> Ingredients</h4>
+        <div class="ingredients-grid">
+          ${recipe.ingredients.map(ingredient => 
+            `<div class="ingredient-item">${sanitizeUserInput(ingredient)}</div>`
+          ).join('')}
+        </div>
+      </div>
+      
+      <div class="recipe-section">
+        <h4><i class="fas fa-list-ol"></i> Instructions</h4>
+        <ol class="steps-list">
+          ${recipe.steps.map(step => 
+            `<li class="step-item">${sanitizeUserInput(step)}</li>`
+          ).join('')}
+        </ol>
+      </div>
+      
+      <div class="recipe-actions">
+        <button class="action-btn btn-favorite" onclick="toggleFavorite(${recipe.id})">
+          <i class="fas fa-heart"></i> ${recipe.favorite ? 'Favorited' : 'Add to Favorites'}
+        </button>
+        <button class="action-btn btn-edit" onclick="editRecipe(${recipe.id})">
+          <i class="fas fa-edit"></i> Edit
+        </button>
+        <button class="action-btn btn-delete" onclick="deleteRecipe(${recipe.id})">
+          <i class="fas fa-trash"></i> Delete
+        </button>
+      </div>
+      
+      <div class="rating-system">
+        <div class="rating-prompt">
+          <strong>Rate this recipe</strong>
+          <span class="rating-text">Share your experience with this dish</span>
+        </div>
+        <div class="rating-stars" id="stars-${recipe.id}">
+          ${[1,2,3,4,5].map(i => 
+            `<span class="star" data-rating="${i}" onclick="rateRecipe(${recipe.id}, ${i})">★</span>`
+          ).join('')}
+        </div>
+        <div class="comment-form-mini">
+          <textarea class="comment-text-mini" id="comment-${recipe.id}" placeholder="Add a comment (optional)"></textarea>
+          <button class="submit-rating" onclick="submitRating(${recipe.id})">Submit Rating</button>
+        </div>
+      </div>
+      
+      <div class="comments-section">
+        <h4><i class="fas fa-comments"></i> Community Comments</h4>
+        <div class="comments-list" id="comments-${recipe.id}">
+          ${recipe.comments.map(comment => `
+            <div class="comment">
+              <div class="comment-header">
+                <span class="comment-user">${sanitizeUserInput(comment.user)}</span>
+                <span class="comment-date">${comment.date}</span>
+              </div>
+              <p class="comment-text">${sanitizeUserInput(comment.text)}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  return card;
+}
     // DOM elements
     const recipesList = document.getElementById('recipes-list');
     const africanRecipesList = document.getElementById('african-recipes-list');
