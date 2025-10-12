@@ -1695,20 +1695,20 @@
   </style>
 </head>
 <body>
-  <!-- Age Verification Gate - NEW -->
-  <div class="age-gate" id="ageGate">
-    <div class="age-content">
-      <h2>Age Verification</h2>
-      <p>This website contains content related to cooking and recipes. Please confirm you are at least 13 years old to continue.</p>
-      <div class="age-buttons">
-        <button class="age-btn age-confirm" onclick="confirmAge()">I am 13 or older</button>
-        <button class="age-btn age-exit" onclick="exitSite()">Exit Site</button>
-      </div>
-      <p style="margin-top: 1rem; font-size: 0.8rem; opacity: 0.8;">
-        By continuing, you agree to our <a href="javascript:void(0)" onclick="showPrivacyPolicy()" style="color: white; text-decoration: underline;">Privacy Policy</a> and <a href="javascript:void(0)" onclick="showTermsOfService()" style="color: white; text-decoration: underline;">Terms of Service</a>.
-      </p>
+<!-- Age Verification Gate - FIXED -->
+<div class="age-gate" id="ageGate">
+  <div class="age-content">
+    <h2>Age Verification</h2>
+    <p>This website contains content related to cooking and recipes. Please confirm you are at least 13 years old to continue.</p>
+    <div class="age-buttons">
+      <button class="age-btn age-confirm" id="confirmAgeBtn">I am 13 or older</button>
+      <button class="age-btn age-exit" id="exitSiteBtn">Exit Site</button>
     </div>
+    <p style="margin-top: 1rem; font-size: 0.8rem; opacity: 0.8;">
+      By continuing, you agree to our <a href="javascript:void(0)" onclick="showPrivacyPolicy()" style="color: white; text-decoration: underline;">Privacy Policy</a> and <a href="javascript:void(0)" onclick="showTermsOfService()" style="color: white; text-decoration: underline;">Terms of Service</a>.
+    </p>
   </div>
+</div>
 
   <!-- Cookie Consent Banner - NEW -->
   <div class="cookie-consent" id="cookieConsent">
@@ -3878,10 +3878,25 @@ let recipes = [
 
 // Initialize the application when DOM is fully loaded
 function init() {
+  // Setup age verification event listeners FIRST
+  const confirmAgeBtn = document.getElementById('confirmAgeBtn');
+  const exitSiteBtn = document.getElementById('exitSiteBtn');
+  
+  if (confirmAgeBtn) {
+    confirmAgeBtn.addEventListener('click', confirmAge);
+  }
+  
+  if (exitSiteBtn) {
+    exitSiteBtn.addEventListener('click', exitSite);
+  }
+
   // Check age verification
   if (!localStorage.getItem('ageVerified')) {
     document.getElementById('ageGate').style.display = 'flex';
-    return;
+    return; // Stop here if not verified
+  } else {
+    // If already verified, hide the age gate and continue
+    document.getElementById('ageGate').style.display = 'none';
   }
 
   // Check if compliance banner was previously closed
@@ -3906,6 +3921,24 @@ if (document.readyState === 'loading') {
   init();
 }
 
+    // Age Verification Functions
+function confirmAge() {
+  console.log('Age confirmed'); // Debug line
+  localStorage.setItem('ageVerified', 'true');
+  document.getElementById('ageGate').style.display = 'none';
+  showNotification('Welcome to Cuisinéa! Enjoy our recipes.', 'success');
+  
+  // Continue loading the site
+  displayRecipes();
+  displayAfricanRecipes();
+  displayFavoritesCarousel();
+  setupEventListeners();
+}
+
+function exitSite() {
+  console.log('Exiting site'); // Debug line
+  window.location.href = 'https://www.google.com';
+}
     // Add this function to handle any loading errors
 function handleRecipeErrors() {
   const recipesList = document.getElementById('recipes-list');
