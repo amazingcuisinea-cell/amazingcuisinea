@@ -1364,14 +1364,10 @@
   height: 100%;
   background: var(--gradient-primary);
   z-index: 100000;
-  display: none; /* Change this from flex to none */
+  display: flex; /* Changed from none to flex */
   justify-content: center;
   align-items: center;
   color: white;
-}
-
-.age-gate.show {
-  display: flex; /* Show when this class is added */
 }
 
     .age-content {
@@ -2139,6 +2135,7 @@ function showNotification(message, type = 'info') {
           <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
           <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
           <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="javascript:void(0)" onclick="toggleAdminPanel()" aria-label="Admin Panel" style="background: var(--african-sunset);"><i class="fas fa-cog"></i></a>
         </div>
       </div>
       <div class="footer-section">
@@ -3905,12 +3902,12 @@ function init() {
   // Check age verification
   if (!localStorage.getItem('ageVerified')) {
     console.log('Age not verified, showing gate'); // Debug line
-    document.getElementById('ageGate').classList.add('show');
+    ageGate.style.display = 'flex';
     return; // Stop here if not verified
   } else {
     // If already verified, hide the age gate and continue
     console.log('Age already verified'); // Debug line
-    document.getElementById('ageGate').style.display = 'none';
+    ageGate.style.display = 'none';
     loadWebsite();
   }
 }
@@ -3944,7 +3941,7 @@ if (document.readyState === 'loading') {
 function confirmAge() {
   console.log('Age confirmed button clicked'); // Debug line
   localStorage.setItem('ageVerified', 'true');
-  document.getElementById('ageGate').classList.remove('show');
+  ageGate.style.display = 'none';
   showNotification('Welcome to Cuisinéa! Enjoy our recipes.', 'success');
   
   // Continue loading the site
