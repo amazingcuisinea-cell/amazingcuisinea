@@ -4005,56 +4005,160 @@ function displayRecipes(filteredRecipes = recipes) {
       showNotification('Welcome to Cuisinéa! Discover recipes from around the world.', 'success');
     }
 
-    // Display all recipes
-    function displayRecipes(filteredRecipes = recipes) {
-      recipesList.innerHTML = '';
-      
-      if (filteredRecipes.length === 0) {
-        recipesList.innerHTML = '<div class="empty-state">No recipes found matching your criteria. Try a different filter or search term.</div>';
-        return;
-      }
-      
-      filteredRecipes.forEach(recipe => {
-        const recipeCard = createRecipeCard(recipe);
-        recipesList.appendChild(recipeCard);
-      });
-    }
+   // Display all recipes - FIXED
+function displayRecipes(filteredRecipes = recipes) {
+  console.log('Displaying recipes...'); // Debug
+  const recipesList = document.getElementById('recipes-list');
+  
+  if (!recipesList) {
+    console.error('Recipes list container not found');
+    return;
+  }
+  
+  recipesList.innerHTML = '';
+  
+  if (filteredRecipes.length === 0) {
+    recipesList.innerHTML = '<div class="empty-state">No recipes found matching your criteria. Try a different filter or search term.</div>';
+    return;
+  }
+  
+  filteredRecipes.forEach(recipe => {
+    const recipeCard = createRecipeCard(recipe);
+    recipesList.appendChild(recipeCard);
+  });
+  
+  console.log(`Displayed ${filteredRecipes.length} recipes`); // Debug
+}
 
-    // Display African recipes
-    function displayAfricanRecipes() {
-      const africanRecipes = recipes.filter(recipe => recipe.cuisine === 'African');
-      africanRecipesList.innerHTML = '';
-      
-      africanRecipes.forEach(recipe => {
-        const recipeCard = createRecipeCard(recipe);
-        africanRecipesList.appendChild(recipeCard);
-      });
-    }
+// Display African recipes - FIXED
+function displayAfricanRecipes() {
+  console.log('Displaying African recipes...'); // Debug
+  const africanRecipesList = document.getElementById('african-recipes-list');
+  
+  if (!africanRecipesList) {
+    console.error('African recipes list container not found');
+    return;
+  }
+  
+  const africanRecipes = recipes.filter(recipe => recipe.cuisine === 'African');
+  africanRecipesList.innerHTML = '';
+  
+  africanRecipes.forEach(recipe => {
+    const recipeCard = createRecipeCard(recipe);
+    africanRecipesList.appendChild(recipeCard);
+  });
+  
+  console.log(`Displayed ${africanRecipes.length} African recipes`); // Debug
+}
 
-    // Display favorites carousel
-    function displayFavoritesCarousel() {
-      const favoriteRecipes = recipes.filter(recipe => recipe.favorite);
-      favoritesCarousel.innerHTML = '';
-      
-      if (favoriteRecipes.length === 0) {
-        favoritesCarousel.innerHTML = '<div class="empty-state">No favorite recipes yet. Start adding some!</div>';
-        return;
+// Display favorites carousel - FIXED
+function displayFavoritesCarousel() {
+  console.log('Displaying favorites...'); // Debug
+  const favoritesCarousel = document.getElementById('favorites-carousel');
+  
+  if (!favoritesCarousel) {
+    console.error('Favorites carousel container not found');
+    return;
+  }
+  
+  const favoriteRecipes = recipes.filter(recipe => recipe.favorite);
+  favoritesCarousel.innerHTML = '';
+  
+  if (favoriteRecipes.length === 0) {
+    favoritesCarousel.innerHTML = '<div class="empty-state">No favorite recipes yet. Start adding some!</div>';
+    return;
+  }
+  
+  favoriteRecipes.forEach(recipe => {
+    const favoriteCard = document.createElement('div');
+    favoriteCard.className = 'favorite-card';
+    favoriteCard.innerHTML = `
+      <h4>${recipe.name}</h4>
+      <p>${recipe.cuisine} Cuisine</p>
+      <div class="rating-display">
+        <div class="avg-rating">${calculateAverageRating(recipe.ratings).toFixed(1)}</div>
+        <div class="stars-large">${generateStarRating(calculateAverageRating(recipe.ratings))}</div>
+      </div>
+    `;
+    favoritesCarousel.appendChild(favoriteCard);
+  });
+  
+  console.log(`Displayed ${favoriteRecipes.length} favorite recipes`); // Debug
+}
+
+// Setup event listeners - FIXED
+function setupEventListeners() {
+  console.log('Setting up event listeners...'); // Debug
+  
+  // Cuisine filter
+  const cuisineFilter = document.getElementById('cuisine-filter');
+  if (cuisineFilter) {
+    cuisineFilter.addEventListener('change', (e) => {
+      const filterValue = e.target.value;
+      if (filterValue === '') {
+        displayRecipes();
+      } else if (filterValue === 'favorites') {
+        const favoriteRecipes = recipes.filter(recipe => recipe.favorite);
+        displayRecipes(favoriteRecipes);
+      } else {
+        const filteredRecipes = recipes.filter(recipe => recipe.cuisine === filterValue);
+        displayRecipes(filteredRecipes);
       }
-      
-      favoriteRecipes.forEach(recipe => {
-        const favoriteCard = document.createElement('div');
-        favoriteCard.className = 'favorite-card';
-        favoriteCard.innerHTML = `
-          <h4>${recipe.name}</h4>
-          <p>${recipe.cuisine} Cuisine</p>
-          <div class="rating-display">
-            <div class="avg-rating">${calculateAverageRating(recipe.ratings).toFixed(1)}</div>
-            <div class="stars-large">${generateStarRating(calculateAverageRating(recipe.ratings))}</div>
-          </div>
-        `;
-        favoritesCarousel.appendChild(favoriteCard);
-      });
-    }
+    });
+  }
+  
+  // Auto search
+  const autoRecipeBtn = document.getElementById('auto-recipe-btn');
+  const autoRecipeInput = document.getElementById('auto-recipe-input');
+  
+  if (autoRecipeBtn) {
+    autoRecipeBtn.addEventListener('click', performSearch);
+  }
+  
+  if (autoRecipeInput) {
+    autoRecipeInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') performSearch();
+    });
+  }
+  
+  // Submit recipe
+  const submitRecipeBtn = document.getElementById('submit-recipe');
+  if (submitRecipeBtn) {
+    submitRecipeBtn.addEventListener('click', addNewRecipe);
+  }
+  
+  // Admin panel
+  const closeAdminPanel = document.getElementById('close-admin-panel');
+  if (closeAdminPanel) {
+    closeAdminPanel.addEventListener('click', () => {
+      document.getElementById('admin-panel').style.display = 'none';
+    });
+  }
+  
+  console.log('Event listeners setup complete'); // Debug
+}
+
+// Load website function - FIXED
+function loadWebsite() {
+  console.log('Loading website content...'); // Debug
+  
+  // Check if compliance banner was previously closed
+  const complianceBanner = document.getElementById('complianceBanner');
+  if (complianceBanner && localStorage.getItem('complianceBannerClosed') === 'true') {
+    complianceBanner.style.display = 'none';
+  }
+  
+  // Load recipes immediately
+  displayRecipes();
+  displayAfricanRecipes();
+  displayFavoritesCarousel();
+  setupEventListeners();
+  
+  // Show welcome notification
+  showNotification('Welcome to Cuisinéa! Discover recipes from around the world.', 'success');
+  
+  console.log('Website loaded successfully'); // Debug
+}
 
    // Update the createRecipeCard function to include reply functionality AND SECURITY
 function createRecipeCard(recipe) {
