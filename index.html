@@ -1355,20 +1355,24 @@
       border-radius: 4px;
     }
 
-    /* Age Gate Overlay - NEW */
-    .age-gate {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--gradient-primary);
-      z-index: 100000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-    }
+/* Age Gate Overlay - FIXED */
+.age-gate {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient-primary);
+  z-index: 100000;
+  display: none; /* Change this from flex to none */
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.age-gate.show {
+  display: flex; /* Show when this class is added */
+}
 
     .age-content {
       background: rgba(255,255,255,0.1);
@@ -3878,27 +3882,42 @@ let recipes = [
 
 // Initialize the application when DOM is fully loaded
 function init() {
+  console.log('Initializing app...'); // Debug line
+  
   // Setup age verification event listeners FIRST
   const confirmAgeBtn = document.getElementById('confirmAgeBtn');
   const exitSiteBtn = document.getElementById('exitSiteBtn');
   
   if (confirmAgeBtn) {
     confirmAgeBtn.addEventListener('click', confirmAge);
+    console.log('Confirm button found'); // Debug line
+  } else {
+    console.log('Confirm button NOT found'); // Debug line
   }
   
   if (exitSiteBtn) {
     exitSiteBtn.addEventListener('click', exitSite);
+    console.log('Exit button found'); // Debug line
+  } else {
+    console.log('Exit button NOT found'); // Debug line
   }
 
   // Check age verification
   if (!localStorage.getItem('ageVerified')) {
-    document.getElementById('ageGate').style.display = 'flex';
+    console.log('Age not verified, showing gate'); // Debug line
+    document.getElementById('ageGate').classList.add('show');
     return; // Stop here if not verified
   } else {
     // If already verified, hide the age gate and continue
+    console.log('Age already verified'); // Debug line
     document.getElementById('ageGate').style.display = 'none';
+    loadWebsite();
   }
+}
 
+function loadWebsite() {
+  console.log('Loading website content...'); // Debug line
+  
   // Check if compliance banner was previously closed
   if (localStorage.getItem('complianceBannerClosed') === 'true') {
     document.getElementById('complianceBanner').style.display = 'none';
@@ -3921,22 +3940,19 @@ if (document.readyState === 'loading') {
   init();
 }
 
-    // Age Verification Functions
+// Age Verification Functions - FIXED
 function confirmAge() {
-  console.log('Age confirmed'); // Debug line
+  console.log('Age confirmed button clicked'); // Debug line
   localStorage.setItem('ageVerified', 'true');
-  document.getElementById('ageGate').style.display = 'none';
+  document.getElementById('ageGate').classList.remove('show');
   showNotification('Welcome to Cuisinéa! Enjoy our recipes.', 'success');
   
   // Continue loading the site
-  displayRecipes();
-  displayAfricanRecipes();
-  displayFavoritesCarousel();
-  setupEventListeners();
+  loadWebsite();
 }
 
 function exitSite() {
-  console.log('Exiting site'); // Debug line
+  console.log('Exit site button clicked'); // Debug line
   window.location.href = 'https://www.google.com';
 }
     // Add this function to handle any loading errors
