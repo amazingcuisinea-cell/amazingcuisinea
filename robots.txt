@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /private
+
+Sitemap: https://amazingcuisinea.vercel.app/sitemap.xml
