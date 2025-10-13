@@ -1365,7 +1365,7 @@
   height: 100%;
   background: var(--gradient-primary);
   z-index: 100000;
-  display: flex; /* CHANGED FROM none TO flex */
+  display: flex; /* CHANGED TO flex */
   justify-content: center;
   align-items: center;
   color: white;
@@ -3556,6 +3556,7 @@ let recipes = [
 ];
 
 // Additional recipes would continue in the same pork-free pattern...
+    
 // Add this missing function - this creates the recipe cards
 function createRecipeCard(recipe) {
   const card = document.createElement('div');
@@ -3706,65 +3707,69 @@ function createRecipeCard(recipe) {
       adminAuth.style.display = 'none';
     }
 
-// Age Verification Functions - FIXED
+// AGE VERIFICATION FUNCTIONS
 function confirmAge() {
-  console.log('Age confirmed button clicked');
+  console.log('Age confirmation clicked');
   localStorage.setItem('ageVerified', 'true');
-  document.getElementById('ageGate').style.display = 'none';
-  showNotification('Welcome to Cuisinéa! Enjoy our recipes.', 'success');
-  
-  // Load the website content
+  const ageGate = document.getElementById('ageGate');
+  if (ageGate) {
+    ageGate.style.display = 'none';
+  }
   loadWebsite();
+  showNotification('Welcome to Cuisinéa! Enjoy our recipes.', 'success');
 }
 
 function exitSite() {
-  console.log('Exit site button clicked');
   window.location.href = 'https://www.google.com';
 }
 
-// Initialize the application when DOM is fully loaded - FIXED
+// WEBSITE LOADING
+function loadWebsite() {
+  console.log('Loading website content...');
+  
+  // Load recipes
+  displayRecipes();
+  displayAfricanRecipes();
+  displayFavoritesCarousel();
+  setupEventListeners();
+  
+  showNotification('Welcome to Cuisinéa! Discover recipes from around the world.', 'success');
+}
+
+// INITIALIZATION
 function init() {
   console.log('Initializing app...');
   
-  // Check age verification FIRST
+  // Check age verification
   if (!localStorage.getItem('ageVerified')) {
     console.log('Age not verified, showing gate');
-    document.getElementById('ageGate').style.display = 'flex';
-    
-    // Setup age verification event listeners
-    const confirmAgeBtn = document.getElementById('confirmAgeBtn');
-    const exitSiteBtn = document.getElementById('exitSiteBtn');
-    
-    if (confirmAgeBtn) {
-      confirmAgeBtn.addEventListener('click', confirmAge);
-      console.log('Confirm button event listener attached');
-    } else {
-      console.log('Confirm button NOT found');
+    const ageGate = document.getElementById('ageGate');
+    if (ageGate) {
+      ageGate.style.display = 'flex';
     }
-    
-    if (exitSiteBtn) {
-      exitSiteBtn.addEventListener('click', exitSite);
-      console.log('Exit button event listener attached');
-    } else {
-      console.log('Exit button NOT found');
-    }
-    
   } else {
-    // If already verified, hide the age gate and load website
+    // If already verified, load the website
     console.log('Age already verified');
-    document.getElementById('ageGate').style.display = 'none';
+    const ageGate = document.getElementById('ageGate');
+    if (ageGate) {
+      ageGate.style.display = 'none';
+    }
     loadWebsite();
   }
 }
 
-// Load website function - FIXED
-function loadWebsite() {
-  console.log('Loading website content...');
-  
-  // Check if compliance banner was previously closed
-  if (localStorage.getItem('complianceBannerClosed') === 'true') {
-    document.getElementById('complianceBanner').style.display = 'none';
+// Start the application
+document.addEventListener('DOMContentLoaded', init);
+
+// Emergency fallback: If recipes don't load after 3 seconds, force load them
+setTimeout(() => {
+  const recipesList = document.getElementById('recipes-list');
+  if (recipesList && recipesList.children.length === 0) {
+    console.log('Emergency fallback: Forcing recipe load');
+    displayRecipes();
+    displayAfricanRecipes();
   }
+}, 3000);
   
   // Load recipes
   displayRecipes();
