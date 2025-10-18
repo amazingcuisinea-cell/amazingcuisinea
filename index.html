@@ -4081,53 +4081,61 @@ const defaultRecipes = [
       }
     };
 
-    window.addNewRecipe = function() {
-      const name = sanitizeUserInput(document.getElementById('recipe-name').value);
-      const cuisine = document.getElementById('recipe-cuisine').value;
-      const description = sanitizeUserInput(document.getElementById('recipe-description').value);
-      const ingredients = document.getElementById('recipe-ingredients').value.split('\n')
-        .filter(line => line.trim())
-        .map(line => sanitizeUserInput(line));
-      const steps = document.getElementById('recipe-steps').value.split('\n')
-        .filter(line => line.trim())
-        .map(line => sanitizeUserInput(line));
-      
-      if (!name || !cuisine || !description || ingredients.length === 0 || steps.length === 0) {
-        showNotification('Please fill in all recipe fields', 'error');
-        return;
-      }
-      
-      const newRecipe = {
-        id: recipes.length + 1,
-        name,
-        cuisine,
-        description,
-        ingredients,
-        steps,
-        ratings: [],
-        comments: [],
-        favorite: false,
-        cookingTime: 30,
-        difficulty: 'Intermediate'
-      };
-      
-      recipes.push(newRecipe);
-      saveToLocalStorage(recipes);
-      
-      // Reset form
-      document.getElementById('recipe-name').value = '';
-      document.getElementById('recipe-cuisine').value = '';
-      document.getElementById('recipe-description').value = '';
-      document.getElementById('recipe-ingredients').value = '';
-      document.getElementById('recipe-steps').value = '';
-      
-      displayRecipes();
-      displayAfricanRecipes();
-      displayFavoritesCarousel();
-      
-      showNotification('Recipe added successfully!', 'success');
-    };
-
+// UPDATED: addNewRecipe function with proper time and difficulty handling
+window.addNewRecipe = function() {
+  const name = sanitizeUserInput(document.getElementById('recipe-name').value);
+  const cuisine = document.getElementById('recipe-cuisine').value;
+  const description = sanitizeUserInput(document.getElementById('recipe-description').value);
+  const ingredients = document.getElementById('recipe-ingredients').value.split('\n')
+    .filter(line => line.trim())
+    .map(line => sanitizeUserInput(line));
+  const steps = document.getElementById('recipe-steps').value.split('\n')
+    .filter(line => line.trim())
+    .map(line => sanitizeUserInput(line));
+  
+  // FIXED: Get cooking time and difficulty - remove the default values
+  const cookingTimeInput = document.getElementById('recipe-time').value;
+  const cookingTime = cookingTimeInput ? parseInt(cookingTimeInput) : null;
+  const difficulty = document.getElementById('recipe-difficulty').value;
+  
+  // FIXED: Validation - check if cookingTime is provided and valid
+  if (!name || !cuisine || !description || ingredients.length === 0 || steps.length === 0 || !cookingTime || cookingTime < 1 || !difficulty) {
+    showNotification('Please fill in all recipe fields including valid cooking time (minimum 1 minute) and difficulty', 'error');
+    return;
+  }
+  
+  const newRecipe = {
+    id: recipes.length + 1,
+    name,
+    cuisine,
+    description,
+    ingredients,
+    steps,
+    ratings: [],
+    comments: [],
+    favorite: false,
+    cookingTime: cookingTime, // FIXED: Use the actual user input
+    difficulty: difficulty    // FIXED: Use the actual user selection
+  };
+  
+  recipes.push(newRecipe);
+  saveToLocalStorage(recipes);
+  
+  // Reset form
+  document.getElementById('recipe-name').value = '';
+  document.getElementById('recipe-cuisine').value = '';
+  document.getElementById('recipe-description').value = '';
+  document.getElementById('recipe-ingredients').value = '';
+  document.getElementById('recipe-steps').value = '';
+  document.getElementById('recipe-time').value = '';
+  document.getElementById('recipe-difficulty').value = '';
+  
+  displayRecipes();
+  displayAfricanRecipes();
+  displayFavoritesCarousel();
+  
+  showNotification('Recipe added successfully!', 'success');
+};
     window.showComingSoon = function() {
       showNotification('This feature is coming soon!', 'info');
     };
