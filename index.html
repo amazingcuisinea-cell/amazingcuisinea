@@ -3659,9 +3659,9 @@ const defaultRecipes = [
               steps: recipeData.steps || [],
               ratings: recipeData.ratings || [],
               comments: [],
-              favoriteCount: recipeData.favoriteCount || 0,
-              cookingTime: recipeData.cookingTime || 30,
-              difficulty: recipeData.difficulty || 'Intermediate',
+              favoriteCount: recipeData.favoriteCount || [],
+              cookingTime: recipeData.cookingTime || [],
+              difficulty: recipeData.difficulty || [],
               submittedBy: issue.user.login,
               submittedDate: issue.created_at,
               issueNumber: issue.number
