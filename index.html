@@ -2197,6 +2197,7 @@
   <div class="admin-tabs">
     <button class="admin-tab active" onclick="switchAdminTab('comments')">Comments & Replies</button>
     <button class="admin-tab" onclick="switchAdminTab('ratings')">Ratings Management</button>
+    <button class="admin-tab" onclick="switchAdminTab('recipes')">Recipe Management</button>
   </div>
   
   <div id="admin-comments-list" class="admin-tab-content active">
@@ -2205,6 +2206,10 @@
   
   <div id="admin-ratings-list" class="admin-tab-content">
     <!-- Ratings will be loaded here -->
+  </div>
+  
+  <div id="admin-recipes-list" class="admin-tab-content">
+    <!-- Recipes will be loaded here -->
   </div>
   
   <button id="close-admin-panel" class="luxury-btn" style="margin-top: 1rem;">Close Panel</button>
@@ -3595,7 +3600,6 @@ const defaultRecipes = [
     ],
     steps: [
       "Soak chicken in buttermilk for at least 4 hours, preferably overnight.",
-      "Mix flour with spices and seasonings.",
       "Drain chicken and dredge in flour mixture.",
       "Heat oil to 175°C in large Dutch oven.",
       "Fry chicken in batches until golden brown and cooked through.",
@@ -3814,9 +3818,6 @@ const defaultRecipes = [
             <button class="action-btn btn-favorite" onclick="toggleFavorite(${recipe.id})">
               <i class="fas fa-heart"></i> ${recipe.favorite ? 'Favorited' : 'Add to Favorites'}
             </button>
-            <button class="action-btn btn-delete" onclick="deleteRecipe(${recipe.id})">
-              <i class="fas fa-trash"></i> Delete
-            </button>
           </div>
           
           <div class="rating-system">
@@ -4029,23 +4030,6 @@ const defaultRecipes = [
       showNotification('Edit feature coming soon!', 'info');
     };
 
-   window.deleteRecipe = function(recipeId) {
-  if (confirm('Are you sure you want to delete this recipe? This action cannot be undone.')) {
-    // Remove the recipe from the array
-    recipes = recipes.filter(r => r.id !== recipeId);
-    
-    // Save the updated array to localStorage
-    saveToLocalStorage(recipes);
-    
-    // Update the display
-    displayRecipes();
-    displayAfricanRecipes();
-    displayFavoritesCarousel();
-    
-    showNotification('Recipe deleted successfully', 'success');
-  }
-};
-
     window.rateRecipe = function(recipeId, rating) {
       const stars = document.querySelectorAll(`#stars-${recipeId} .star`);
       stars.forEach((star, index) => {
@@ -4155,6 +4139,7 @@ window.addNewRecipe = function() {
       if (password === ADMIN_PASSWORD) {
         document.getElementById('adminAuth').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
+        loadAdminPanel();
         showNotification('Admin authentication successful', 'success');
       } else {
         showNotification('Invalid admin password', 'error');
@@ -4190,6 +4175,74 @@ window.addNewRecipe = function() {
       
       // Activate selected tab
       event.target.classList.add('active');
+    };
+
+    function loadAdminPanel() {
+      loadAdminComments();
+      loadAdminRatings();
+      loadAdminRecipes();
+    }
+
+    function loadAdminRecipes() {
+      const adminRecipesList = document.getElementById('admin-recipes-list');
+      adminRecipesList.innerHTML = '';
+      
+      if (recipes.length === 0) {
+        adminRecipesList.innerHTML = '<div class="no-ratings">No recipes found</div>';
+        return;
+      }
+      
+      recipes.forEach(recipe => {
+        const recipeElement = document.createElement('div');
+        recipeElement.className = 'admin-rating';
+        recipeElement.innerHTML = `
+          <div class="rating-info">
+            <div class="rating-recipe">${recipe.name}</div>
+            <div class="rating-value">${recipe.cuisine}</div>
+          </div>
+          <div class="rating-info">
+            <div class="rating-user">Cooking Time: ${recipe.cookingTime} mins</div>
+            <div class="rating-date">Difficulty: ${recipe.difficulty}</div>
+          </div>
+          <p>${recipe.description}</p>
+          <div class="admin-rating-actions">
+            <button class="delete-rating-btn" onclick="adminDeleteRecipe(${recipe.id})">
+              <i class="fas fa-trash"></i> Delete Recipe
+            </button>
+          </div>
+        `;
+        adminRecipesList.appendChild(recipeElement);
+      });
+    }
+
+    function loadAdminComments() {
+      // Implementation for loading admin comments
+      const adminCommentsList = document.getElementById('admin-comments-list');
+      adminCommentsList.innerHTML = '<div class="no-ratings">No comments to moderate</div>';
+    }
+
+    function loadAdminRatings() {
+      // Implementation for loading admin ratings
+      const adminRatingsList = document.getElementById('admin-ratings-list');
+      adminRatingsList.innerHTML = '<div class="no-ratings">No ratings to moderate</div>';
+    }
+
+    window.adminDeleteRecipe = function(recipeId) {
+      if (confirm('Are you sure you want to delete this recipe? This action cannot be undone.')) {
+        // Remove the recipe from the array
+        recipes = recipes.filter(r => r.id !== recipeId);
+        
+        // Save the updated array to localStorage
+        saveToLocalStorage(recipes);
+        
+        // Update the display
+        displayRecipes();
+        displayAfricanRecipes();
+        displayFavoritesCarousel();
+        loadAdminRecipes();
+        
+        showNotification('Recipe deleted successfully', 'success');
+      }
     };
 
     // ========== COMPLIANCE FUNCTIONS ==========
@@ -4456,4 +4509,3 @@ window.addNewRecipe = function() {
   </script>
 </body>
 </html>
-
