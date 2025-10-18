@@ -2099,6 +2099,22 @@
             </select>
           </div>
         </div>
+           <!-- NEW: Cooking Time and Difficulty Fields -->
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="recipe-time"><i class="fas fa-clock"></i> Cooking Time (minutes)</label>
+            <input type="number" id="recipe-time" class="luxury-input" placeholder="e.g., 45" min="1" max="480" />
+          </div>
+          <div class="form-group">
+            <label for="recipe-difficulty"><i class="fas fa-signal"></i> Difficulty Level</label>
+            <select id="recipe-difficulty" class="luxury-select">
+              <option value="">Select Difficulty</option>
+              <option value="Easy">Easy</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+          </div>
+        </div>
         <div class="form-group">
           <label for="recipe-description"><i class="fas fa-align-left"></i> Description</label>
           <textarea id="recipe-description" class="luxury-textarea" placeholder="Describe your recipe..."></textarea>
@@ -3797,9 +3813,6 @@ const defaultRecipes = [
           <div class="recipe-actions">
             <button class="action-btn btn-favorite" onclick="toggleFavorite(${recipe.id})">
               <i class="fas fa-heart"></i> ${recipe.favorite ? 'Favorited' : 'Add to Favorites'}
-            </button>
-            <button class="action-btn btn-edit" onclick="editRecipe(${recipe.id})">
-              <i class="fas fa-edit"></i> Edit
             </button>
             <button class="action-btn btn-delete" onclick="deleteRecipe(${recipe.id})">
               <i class="fas fa-trash"></i> Delete
